@@ -1,0 +1,31 @@
+environments:
+  dev: {}
+  prod: {}
+
+---
+
+releases:
+  - name: dev-app
+    chart: ./app
+    labels:
+      env: dev
+
+  - name: prod-app
+    chart: ./app
+    labels:
+      env: prod
+
+  - name: dev-cluster-config
+    chart: ./cluster-config
+    labels:
+      env: dev
+    values:
+      - cluster-config/values-dev.yaml
+
+
+  - name: prod-cluster-config
+    chart: ./cluster-config
+    labels:
+      env: prod
+    values:
+      - cluster-config/values-prod.yaml

@@ -1,0 +1,4 @@
+Deploys CoreDNS config in --namespace kube-system
+^ Might require you to first delete core-dns or patch it so helm owns it
+Deploys Storage Class for local storage globally
+Deploys Calico CNI

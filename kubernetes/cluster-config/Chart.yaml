@@ -1,5 +1,5 @@
 apiVersion: v2
-name: cluster_config
+name: cluster-config
 description: Chart for anything related to k8s cluster configuration
 
 type: application
