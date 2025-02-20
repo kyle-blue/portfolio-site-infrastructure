@@ -1,0 +1,14 @@
+# Configuring container runtime cgroup driver
+# See https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta3
+kubernetesVersion: v1.28.2
+networking:
+  podSubnet: "192.168.0.0/16"
+apiServer:
+  extraArgs:
+    service-node-port-range: 80-32767
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
