@@ -37,6 +37,18 @@ if [ "$INPUT" = "y" ]; then
     sudo apt-get install -y kubelet kubeadm kubectl
     sudo apt-mark hold kubelet kubeadm kubectl
 
+    # Install Helm
+    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+    sudo apt-get install apt-transport-https --yes
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    sudo apt-get update
+    sudo apt-get install -y helm
+
+    # Install Helmfile
+    wget https://github.com/helmfile/helmfile/releases/download/v0.171.0/helmfile_0.171.0_linux_amd64.tar.gz
+    tar -xvzf helmfile_0.171.0_linux_amd64.tar.gz
+    sudo mv ./helmfile /usr/bin/helmfile
+
     # Init docker permissions
     sudo groupadd docker
     sudo usermod -aG docker ${USER}

@@ -13,6 +13,12 @@ if [ "$CREATED" != "y" ]; then
     sudo sed -i '/ swap / s/^/#/' /etc/fstab
     sudo systemctl mask swap.target
    
+    echo "Enabling bridge netfilter"
+    sudo modprobe br_netfilter
+    echo "Enabling bridge netfilter permanently"
+    grep -qxF 'br_netfilter' /etc/modules-load.d/br_netfilter.conf || echo 'br_netfilter' | sudo tee -a /etc/modules-load.d/br_netfilter.conf
+
+
     echo "Applying containerd config to make cgroup container driver systemd (must match)"
     mkdir -p /etc/containerd
     sudo cp "$SCRIPT_PATH/containerd-config.toml" "/etc/containerd/config.toml"
