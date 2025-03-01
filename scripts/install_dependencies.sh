@@ -48,6 +48,8 @@ if [ "$INPUT" = "y" ]; then
     wget https://github.com/helmfile/helmfile/releases/download/v0.171.0/helmfile_0.171.0_linux_amd64.tar.gz
     tar -xvzf helmfile_0.171.0_linux_amd64.tar.gz
     sudo mv ./helmfile /usr/bin/helmfile
+    helm plugin install https://github.com/databus23/helm-diff
+
 
     # Init docker permissions
     sudo groupadd docker

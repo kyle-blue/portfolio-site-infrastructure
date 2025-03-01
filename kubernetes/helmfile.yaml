@@ -3,6 +3,12 @@
 # Deploy only one release with:
 #    helmfile apply -l name=dev-app
 
+hooks:
+  - name: ensure-secrets-exist
+    events: ["prepare"]
+    command: bash
+    args: ["-c", "./prepare-hook.sh"]
+
 releases:
   - name: dev-app
     chart: ./app

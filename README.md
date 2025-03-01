@@ -1,6 +1,10 @@
 # Portfolio Site Infrastructure
 
-- Using Calico CNI plugin for more customisability, like isolation between namespaces, ip filtering, traffic mirroring, changing load balancing algorithms, etc. Default CNI is KubeNet
+- CNI: Calico
+   - for more customisability, like isolation between namespaces, ip filtering, traffic mirroring, changing load balancing algorithms, etc. Default CNI is KubeNet
+- Ingress: Ingress-nginx
+   - Exposed via NodePort (since we are running self managed kubernetes solely on vps(s))
+- Cert-manager (uses letsencrypt)
 
 # Use for development
 
@@ -28,11 +32,9 @@ Manually install dependencies using:
 
 ```
 brew install --cask docker
-brew install python3
-cd ../
-git clone git@github.com:kyle-blue/kubevar
-cd kubevar
-sudo ./install.sh
+brew install helm
+brew install helmfile
+helm plugin install https://github.com/databus23/helm-diff
 ```
 
 In order to run this cluster on MacOS (for dev) use [k3d](https://github.com/k3d-io/k3d).
@@ -52,12 +54,18 @@ As normal, now add the initial cluster secrets before running `./scripts/apply_a
     - `kubectl create secret generic psql-password --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -n app`
     - `kubectl create secret generic ssh-keys --from-file=key=$HOME/.ssh/id_rsa --from-file=key.pub=$HOME/.ssh/id_rsa.pub -n app`
 
+Note: Helmfile prepare hook will disable you from applying any releases if you do not have these secrets present.
+
 ## Setting up a VPS
 
 Prerequisites:
 
-- VPS must use Debian 12
+- VPS must use Debian 11
 
 1. Run new_vps_node_setup.sh script to setup vps with basic security, firewall, ssh etc.
 2. Run install_dependencies.sh
 3. Attach the node to the existing kubernetes cluster
+
+# Note:
+
+It's probably better to have our own helm repo and pull all our helm templates into that (for easier upgrades) instead of having the manifests in here directly, but this is good for now for simplicity and time's sake.
