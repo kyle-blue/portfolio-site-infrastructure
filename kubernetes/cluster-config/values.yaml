@@ -18,3 +18,10 @@ ingress-nginx:
       # May require this to be true in future
       enable-real-ip: "false"
       error-log-level: warn
+
+cert-manager:
+  namespace: cert-manager
+  crds:
+    enabled: true
+  prometheus:
+    enabled: false
