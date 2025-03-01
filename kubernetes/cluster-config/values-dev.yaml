@@ -1,2 +1,7 @@
-# No values needed
-# Mainly used to allow easy recursive apply of subcharts
+ingress-nginx:
+  controller:
+    service:
+      nodePorts:
+        http: 30000
+        https: 30001
+    replicaCount: 1 # Only 1 needed on dev
