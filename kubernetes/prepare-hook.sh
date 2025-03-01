@@ -1,5 +1,7 @@
 #/bin/bash
 
+# Prepare hook which runs before helmfile does anything
+
 MISSING_RESOURCES=""
 
 if ! kubectl get namespace app; then
