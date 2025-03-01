@@ -1,2 +1,7 @@
-# No values needed
-# Mainly used to allow easy recursive apply of subcharts
+ingress-nginx:
+  controller:
+    service:
+      nodePorts:
+        http: 80
+        https: 443
+    replicaCount: 1 # Scale this up with cluster size on prod

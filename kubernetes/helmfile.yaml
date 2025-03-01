@@ -1,8 +1,7 @@
-environments:
-  dev: {}
-  prod: {}
-
----
+# Deploy a certain environment with:
+#    helmfile apply -l env=dev
+# Deploy only one release with:
+#    helmfile apply -l name=dev-app
 
 releases:
   - name: dev-app
@@ -21,7 +20,6 @@ releases:
       env: dev
     values:
       - cluster-config/values-dev.yaml
-
 
   - name: prod-cluster-config
     chart: ./cluster-config
