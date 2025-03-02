@@ -14,11 +14,21 @@ releases:
     chart: ./app
     labels:
       env: dev
+    values:
+      - app/values-dev.yaml
+      - pg:
+          volume:
+            hostMountPath: "{{ exec "bash" (list "-c" "git rev-parse --show-toplevel") | trim}}/.db_data"
 
   - name: prod-app
     chart: ./app
     labels:
       env: prod
+    values:
+      - app/values-prod.yaml
+      - pg:
+          volume:
+            hostMountPath: {{ requiredEnv "HOME" | trim }}/.db_data
 
   - name: dev-cluster-config
     chart: ./cluster-config

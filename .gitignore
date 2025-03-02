@@ -1,0 +1,5 @@
+# Contains working directories/repos for services
+/projects
+
+# Local database data
+/.db_data
