@@ -7,3 +7,7 @@ sudo echo "$cert" > kblue-dev.crt
 sudo mv kblue-dev.crt /usr/local/share/ca-certificates/kblue-dev.crt 
 sudo cp /usr/local/share/ca-certificates/kblue-dev.crt /etc/ssl/certs/kblue-dev.crt
 sudo update-ca-certificates
+
+echo "Done!"
+echo "You may need to update trusted certs separately in chrome"
+echo "Go to chrome://settings/certificates -> Authorities and add /etc/ssl/certs/kblue-dev.crt"

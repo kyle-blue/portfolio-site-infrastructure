@@ -4,7 +4,6 @@ pg:
     type: ClusterIP
     envVars:
       ENVIRONMENT: prod
-
   volume:
     size: 10G
     hostMountPath: /.db_data # OVERRIDDEN IN HELMFILE TO BE $HOME/.db_data
@@ -14,8 +13,17 @@ backend:
     image: registry.gitlab.com/bigboiblue/kblue-io-registry/backend:latest
     numReplicas: 1
     containerPort: 8080
-
   ingress:
     useStagingIssuer: true
-    host: api.kblue-dev.io
-    rps: 10000
+    host: api.kblue.io
+    rps: 20
+
+frontend:
+  service:
+    image: registry.gitlab.com/bigboiblue/kblue-io-registry/frontend:latest
+    numReplicas: 1
+    containerPort: 80
+  ingress:
+    useStagingIssuer: true
+    host: www.kblue.io
+    rps: 20
