@@ -3,6 +3,7 @@
 # Deploy only one release with:
 #    helmfile apply -l name=dev-app
 
+
 hooks:
   - name: ensure-secrets-exist
     events: ["prepare"]
@@ -15,6 +16,9 @@ releases:
     labels:
       env: dev
     values:
+      - globals.yaml
+      - global:
+          environment: dev
       - app/values-dev.yaml
       - pg:
           volume:
@@ -25,6 +29,7 @@ releases:
     labels:
       env: prod
     values:
+      - globals.yaml
       - app/values-prod.yaml
       - pg:
           volume:
@@ -35,6 +40,9 @@ releases:
     labels:
       env: dev
     values:
+      - globals.yaml
+      - global:
+          environment: dev
       - cluster-config/values-dev.yaml
 
   - name: prod-cluster-config
@@ -42,4 +50,5 @@ releases:
     labels:
       env: prod
     values:
+      - globals.yaml
       - cluster-config/values-prod.yaml

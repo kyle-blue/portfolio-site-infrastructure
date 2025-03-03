@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgresql
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "app-namespace" . }}
 spec:
   revisionHistoryLimit: 0
   replicas: {{ .Values.service.numReplicas }}
@@ -19,6 +19,8 @@ spec:
           image: postgres:17.4-alpine
           imagePullPolicy: IfNotPresent
           env:
+            - name: ENVIRONMENT
+              value: {{ include "environment" . }}
             {{- range $key, $value := .Values.service.envVars }}
             - name: {{ $key }}
               value: {{ $value }}

@@ -25,3 +25,6 @@ cert-manager:
     enabled: true
   prometheus:
     enabled: false
+
+trust-manager:
+  namespace: cert-manager

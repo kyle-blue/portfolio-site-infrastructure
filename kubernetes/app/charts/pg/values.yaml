@@ -1,12 +1,9 @@
-namespace: app
-
 service:
   numReplicas: 1
   type: ClusterIP
   # Only used when service.type is NodePort
   nodePort: 5432
-  envVars:
-    ENVIRONMENT: prod
+  envVars: {}
 
 volume:
   size: 10G
