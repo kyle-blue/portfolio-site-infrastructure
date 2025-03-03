@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ include "app-namespace" . }}
+spec:
+  revisionHistoryLimit: 2
+  replicas: {{ .Values.service.numReplicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.service.name }}
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: {{ .Values.service.name }}
+          image: {{ .Values.service.image }}
+          imagePullPolicy: Always
+          env:
+            - name: ENVIRONMENT
+              value: {{ include "environment" . }}
+            {{- range $key, $value := .Values.service.envVars }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          resources: 
+            limits:
+              memory: {{ .Values.service.limits.memory }}
+              cpu: {{ .Values.service.limits.cpu }}
+          ports:
+            - containerPort: {{ .Values.service.containerPort }}
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf-frontend
+            items:
+              - key: nginx.conf
+                path: nginx.conf
