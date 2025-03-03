@@ -1,16 +1,18 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cert-manager
+  name: {{ include "cert-manager-namespace" . }}
   labels:
-    name: cert-manager
+    name: {{ include "cert-manager-namespace" . }}
+
 ---
 
+{{- if eq (include "environment" .) "prod" }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
- name: letsencrypt-staging-issuer
- namespace: cert-manager
+ name: {{ include "staging-issuer-name" . }}
+ namespace: {{ include "cert-manager-namespace" . }}
 spec:
  acme:
    # The ACME server URL
@@ -24,13 +26,13 @@ spec:
    solvers:
    - http01:
        ingress:
-         class:  nginx
+         class: nginx
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-prod-issuer
-  namespace: cert-manager
+  name: {{ include "prod-issuer-name" . }}
+  namespace: {{ include "cert-manager-namespace" . }}
 spec:
   acme:
     # The ACME server URL
@@ -45,3 +47,55 @@ spec:
     - http01:
         ingress:
           class: nginx
+{{- else }} # dev environment
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: {{ include "cert-manager-namespace" . }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: internal-ca
+  namespace: {{ include "cert-manager-namespace" . }}
+spec:
+  isCA: true
+  commonName: "Internal Root CA"
+  secretName: internal-ca-secret
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+---
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: {{ include "ca-bundle-name" . }}
+  namespace: {{ include "cert-manager-namespace" . }}
+spec:
+  sources:
+    - useDefaultCAs: false
+    - secret:
+        name: internal-ca-secret
+        key: ca.crt
+  target:
+    configMap:
+      key: root-certs.pem
+    namespaceSelector:
+      matchLabels: # Must match all
+        kubernetes.io/metadata.name: {{ include "app-namespace" . }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "internal-issuer-name" . }}
+  namespace: {{ include "cert-manager-namespace" . }}
+spec:
+  ca:
+    secretName: internal-ca-secret
+{{- end }}

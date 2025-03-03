@@ -1,0 +1,15 @@
+service:
+  name: backend
+  image: registry.gitlab.com/bigboiblue/kblue-io-registry/backend:latest
+  numReplicas: 1
+  containerPort: 8080
+  envVars: {}
+  limits:
+    memory: "512M"
+    cpu: "0.5"
+
+ingress:
+  # When env is prod, set this to true to use letsencrypt staging server for prod testing
+  useStagingIssuer: false
+  host: api.kblue.io
+  rps: 10
