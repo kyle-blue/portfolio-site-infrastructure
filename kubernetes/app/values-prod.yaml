@@ -2,8 +2,6 @@ pg:
   service:
     numReplicas: 1
     type: ClusterIP
-    envVars:
-      ENVIRONMENT: prod
   volume:
     size: 10G
     hostMountPath: /.db_data # OVERRIDDEN IN HELMFILE TO BE $HOME/.db_data

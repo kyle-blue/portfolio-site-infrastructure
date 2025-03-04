@@ -1,54 +1,45 @@
-# Deploy a certain environment with:
-#    helmfile apply -l env=dev
-# Deploy only one release with:
-#    helmfile apply -l name=dev-app
-
+# Deploy with:
+#    helmfile apply -e dev
+#    helmfile apply -e prod
 
 hooks:
   - name: ensure-secrets-exist
     events: ["prepare"]
     command: bash
-    args: ["-c", "./prepare-hook.sh"]
+    args: ["-c", "./prepare-hook.sh {{`{{.Environment.Name}}`}}"]
+
+environments:
+  dev: {}
+  prod: {}
 
 releases:
-  - name: dev-app
+  - name: calico
+    chart: ./tigera-operator
+
+  - name: app
     chart: ./app
+    needs: ["calico", "cluster-config"]
     labels:
-      env: dev
+      env: "{{ .Environment.Name }}"
     values:
       - globals.yaml
-      - global:
-          environment: dev
-      - app/values-dev.yaml
+      - global: {environment: {{ .Environment.Name }}}
+      - "app/values-{{ .Environment.Name }}.yaml"
       - pg:
           volume:
-            hostMountPath: "{{ exec "bash" (list "-c" "git rev-parse --show-toplevel") | trim}}/.db_data"
+            hostMountPath: |
+              {{- if eq .Environment.Name "prod" }}
+                {{ requiredEnv "HOME" | trim }}/.db_data
+              {{- else }}
+                {{ exec "bash" (list "-c" "git rev-parse --show-toplevel") | trim }}/.db_data
+              {{- end }}
 
-  - name: prod-app
-    chart: ./app
-    labels:
-      env: prod
-    values:
-      - globals.yaml
-      - app/values-prod.yaml
-      - pg:
-          volume:
-            hostMountPath: {{ requiredEnv "HOME" | trim }}/.db_data
-
-  - name: dev-cluster-config
+  - name: cluster-config
     chart: ./cluster-config
+    needs: ["calico"]
     labels:
-      env: dev
+      env: "{{ .Environment.Name }}"
     values:
       - globals.yaml
-      - global:
-          environment: dev
-      - cluster-config/values-dev.yaml
-
-  - name: prod-cluster-config
-    chart: ./cluster-config
-    labels:
-      env: prod
-    values:
-      - globals.yaml
-      - cluster-config/values-prod.yaml
+      - global: {environment: {{ .Environment.Name }}}
+      - "cluster-config/values-{{ .Environment.Name }}.yaml"

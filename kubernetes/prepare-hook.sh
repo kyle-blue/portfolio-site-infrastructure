@@ -2,6 +2,15 @@
 
 # Prepare hook which runs before helmfile does anything
 
+
+# Check that an environment has been passed to helmfile command
+if [[ "$1" == "default" ]]; then
+    echo "ERROR: You must specify an environment using '-e <env>'"
+    exit 1
+fi
+
+
+# Validate pre-requisite resources have been first added
 MISSING_RESOURCES=""
 
 if ! kubectl get namespace app; then
