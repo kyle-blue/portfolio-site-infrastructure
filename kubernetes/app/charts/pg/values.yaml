@@ -1,0 +1,11 @@
+service:
+  numReplicas: 1
+  type: ClusterIP
+  # Only used when service.type is NodePort
+  nodePort: 5432
+  envVars: {}
+
+volume:
+  size: 10G
+  # This is to be overwritten in parent helmfile to something in $HOME to prevent permission issues
+  hostMountPath: /.db_data

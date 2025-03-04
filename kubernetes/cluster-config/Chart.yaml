@@ -1,0 +1,9 @@
+apiVersion: v2
+name: cluster-config
+description: Chart for anything related to k8s cluster configuration
+
+type: application
+
+version: 0.0.1
+
+appVersion: "0.0.1"

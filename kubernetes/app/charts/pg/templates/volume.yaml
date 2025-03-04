@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-volume
+  namespace: {{ include "app-namespace" . }}
+  labels:
+    type: local
+    app: postgresql
+spec:
+  storageClassName: local
+  capacity:
+    storage: {{ .Values.volume.size }}
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.volume.hostMountPath }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-volume
+  namespace: {{ include "app-namespace" . }}
+spec:
+  resources:
+    requests:
+      storage: {{ .Values.volume.size }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local

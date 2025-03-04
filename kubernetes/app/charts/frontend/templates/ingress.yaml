@@ -1,0 +1,40 @@
+{{ $issuer := "" }}
+{{ $tlsSecretName := "" }}
+{{- if eq (include "environment" .) "dev" }}
+{{ $issuer = (include "internal-issuer-name" .) }}
+{{ $tlsSecretName = join "" (list "internal-" .Values.service.name "-tls") }}
+{{- else if eq .Values.ingress.useStagingIssuer true }}
+{{ $issuer = (include "staging-issuer-name" .) }}
+{{ $tlsSecretName = join "" (list "staging-" .Values.service.name "-tls")  }}
+{{- else }}
+{{ $issuer = (include "prod-issuer-name" .) }}
+{{ $tlsSecretName = join "" (list "prod-" .Values.service.name "-tls")  }}
+{{- end }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.service.name }}-ingress
+  namespace: {{ include "app-namespace" . }}
+  labels:
+    name: {{ .Values.service.name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/limit-rps: {{ .Values.ingress.rps | quote }}
+    cert-manager.io/cluster-issuer: {{ $issuer }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      secretName: {{ $tlsSecretName }} 
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  number: {{ .Values.service.containerPort }}
