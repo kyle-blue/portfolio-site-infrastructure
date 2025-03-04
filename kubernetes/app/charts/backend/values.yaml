@@ -10,6 +10,6 @@ service:
 
 ingress:
   # When env is prod, set this to true to use letsencrypt staging server for prod testing
-  useStagingIssuer: true
+  useStagingIssuer: false
   host: api.kblue.io
   rps: 20

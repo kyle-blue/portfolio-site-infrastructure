@@ -38,6 +38,11 @@ spec:
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
               readOnly: true
+            {{- if eq (include "environment" .) "dev" }}
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca.crt
+              subPath: ca.crt
+            {{- end }}
       volumes:
         - name: nginx-conf
           configMap:
@@ -45,3 +50,9 @@ spec:
             items:
               - key: nginx.conf
                 path: nginx.conf
+        {{- if eq (include "environment" .) "dev" }}
+        - name: ca-bundle
+          configMap:
+            # ca-bundle made by trust-manager which holds trusted certificate authority (CA) public keys
+            name: {{ include "ca-bundle-name" . }}
+        {{- end }}

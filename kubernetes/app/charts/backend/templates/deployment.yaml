@@ -37,6 +37,7 @@ spec:
             - secretRef:
                 name: psql-password
                 optional: false
+      {{- if eq (include "environment" .) "dev" }}
           volumeMounts:
             - name: ca-bundle
               mountPath: /etc/ssl/certs/ca.crt
@@ -46,3 +47,4 @@ spec:
           configMap:
             # ca-bundle made by trust-manager which holds trusted certificate authority (CA) public keys
             name: {{ include "ca-bundle-name" . }}
+      {{- end }}
