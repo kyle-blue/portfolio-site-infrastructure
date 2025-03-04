@@ -66,7 +66,7 @@ releases:
           volume:
             hostMountPath: |
               {{- if eq .Environment.Name "prod" }}
-                {{ requiredEnv "HOME" | trim }}/.db_data
+                /home/cluster-admin/.db_data"
               {{- else }}
                 {{ exec "bash" (list "-c" "git rev-parse --show-toplevel") | trim }}/.db_data
               {{- end }}
