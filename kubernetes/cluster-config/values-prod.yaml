@@ -1,7 +1,0 @@
-ingress-nginx:
-  controller:
-    service:
-      nodePorts:
-        http: 80
-        https: 443
-    replicaCount: 1 # Scale this up with cluster size on prod

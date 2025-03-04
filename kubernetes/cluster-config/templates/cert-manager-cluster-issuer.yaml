@@ -82,7 +82,7 @@ spec:
     - useDefaultCAs: false
     - secret:
         name: internal-ca-secret
-        key: tls.crt # Shows full chain if intermediate certs (needed for chrome) whereas ca is just the ca root cert
+        key: ca.crt
   target:
     configMap:
       key: root-certs.pem

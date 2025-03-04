@@ -1,5 +1,5 @@
 {{- define "cert-manager-namespace" }}
-{{- index .Values "cert-manager" "namespace" }}
+{{- .Values.global.certManagerNamespace }}
 {{- end }}
 
 ## GLOBALS ##
