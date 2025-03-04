@@ -5,7 +5,7 @@
 {{ $tlsSecretName = join "" (list "internal-" .Values.service.name "-tls") }}
 {{- else if eq .Values.ingress.useStagingIssuer true }}
 {{ $issuer = (include "staging-issuer-name" .) }}
-{{ $tlsSecretName = join "" (list "stapging-" .Values.service.name "-tls")  }}
+{{ $tlsSecretName = join "" (list "staging-" .Values.service.name "-tls")  }}
 {{- else }}
 {{ $issuer = (include "prod-issuer-name" .) }}
 {{ $tlsSecretName = join "" (list "prod-" .Values.service.name "-tls")  }}
