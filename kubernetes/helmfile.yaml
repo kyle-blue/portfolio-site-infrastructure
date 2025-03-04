@@ -1,0 +1,74 @@
+# Initial install with:
+#    helmfile sync -e dev --take-ownership
+# Further deploy with:
+#    helmfile apply -e dev --take-ownership
+
+environments:
+  dev: {}
+  prod: {}
+---
+
+hooks:
+  - name: ensure-secrets-exist
+    events: ["prepare"]
+    command: bash
+    args: ["-c", "./prepare-hook.sh {{`{{.Environment.Name}}`}}"]
+
+helmDefaults:
+  wait: true
+  waitForJobs: true
+
+releases:
+  - name: calico
+    chart: ./tigera-operator
+    createNamespace: true
+    # We don't want tilt to pick this up, since it will apply all manifests, one of which uninstalls previous versions of calico
+    # So in tilt we ensure we select all manifests except those with hideInTilt
+    labels: { hideInTilt: true }
+
+  - name: cert-manager
+    chart: ./cert-manager
+    needs: ["calico"]
+    values: ["cert-manager/values-all.yaml"]
+
+
+  - name: trust-manager
+    chart: ./trust-manager
+    needs: ["calico", "cert-manager"]
+    values: ["trust-manager/values-all.yaml"]
+
+  - name: ingress-nginx
+    chart: ./ingress-nginx
+    needs: ["calico", "cert-manager"]
+    values:
+      - "ingress-nginx/values-all.yaml"
+      - "ingress-nginx/values-{{ .Environment.Name }}.yaml"
+
+  - name: cluster-config
+    chart: ./cluster-config
+    needs: ["calico", "cert-manager", "trust-manager", "ingress-nginx"]
+    labels:
+      env: "{{ .Environment.Name }}"
+    values:
+      - globals.yaml
+      - global: {environment: {{ .Environment.Name }}}
+
+  - name: app
+    chart: ./app
+    needs: ["cluster-config"]
+    labels:
+      env: "{{ .Environment.Name }}"
+    values:
+      - globals.yaml
+      - global: {environment: {{ .Environment.Name }}}
+      - "app/values-{{ .Environment.Name }}.yaml"
+      - pg:
+          volume:
+            hostMountPath: |
+              {{- if eq .Environment.Name "prod" }}
+                {{ requiredEnv "HOME" | trim }}/.db_data
+              {{- else }}
+                {{ exec "bash" (list "-c" "git rev-parse --show-toplevel") | trim }}/.db_data
+              {{- end }}
+
+

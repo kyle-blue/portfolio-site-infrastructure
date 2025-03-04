@@ -1,0 +1,28 @@
+pg:
+  service:
+    numReplicas: 1
+    type: NodePort
+    nodePort: 5432
+  volume:
+    size: 1G
+    hostMountPath: /.db_data # OVERRIDDEN IN HELMFILE TO BE $GIT_ROOT/.db_data
+
+backend:
+  service:
+    image: registry.gitlab.com/bigboiblue/kblue-io-registry/backend-dev:latest
+    numReplicas: 1
+    containerPort: 8080
+  ingress:
+    useStagingIssuer: true
+    host: api.kblue-dev.io
+    rps: 10000
+
+frontend:
+  service:
+    image: registry.gitlab.com/bigboiblue/kblue-io-registry/frontend-dev:latest
+    numReplicas: 1
+    containerPort: 3000
+  ingress:
+    useStagingIssuer: true
+    host: www.kblue-dev.io
+    rps: 10000

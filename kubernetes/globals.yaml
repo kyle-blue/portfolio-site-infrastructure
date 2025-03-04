@@ -1,0 +1,9 @@
+global:
+  environment: dev
+  appNamespace: app
+  certManagerNamespace: cert-manager
+  caBundleName: internal-ca-bundle
+  issuerNames:
+    staging: letsencrypt-staging-issuer
+    prod: letsencrypt-prod-issuer
+    internal: internal-ca-issuer

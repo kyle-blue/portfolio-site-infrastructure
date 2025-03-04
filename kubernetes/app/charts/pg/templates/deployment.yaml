@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  namespace: {{ include "app-namespace" . }}
+spec:
+  revisionHistoryLimit: 0
+  replicas: {{ .Values.service.numReplicas }}
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:17.4-alpine
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ENVIRONMENT
+              value: {{ include "environment" . }}
+            {{- range $key, $value := .Values.service.envVars }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          resources:
+            requests:
+              memory: "500M"
+              cpu: "0.5"
+            limits:
+              memory: "1G"
+              cpu: "1"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: psql-config
+            - secretRef:
+                name: psql-password
+                optional: false
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: postgresql-volume

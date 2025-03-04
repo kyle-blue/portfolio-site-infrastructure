@@ -1,0 +1,19 @@
+controller:
+  service:
+    type: NodePort
+
+  # -- Global configuration passed to the ConfigMap consumed by the controller. Values may contain Helm templates.
+  # Ref.: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+  config:
+    allow-snippet-annotations: "true"
+    client-head-buffer-size: 10k
+    # Can also be set on a per Ingress basis - for annotation config see: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md
+    client-body-buffer-size: 80k
+    keep-alive: "75"
+    large-client-header-buffers: 4 10k
+    load-balance: ewma
+    # Auto is just the number of available cpu cores. Maybe set this to 1 or 2 (although it shouldn't matter since it's in a container)?
+    worker-processes: auto
+    # May require this to be true in future
+    enable-real-ip: "false"
+    error-log-level: warn
