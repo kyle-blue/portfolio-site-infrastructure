@@ -14,7 +14,11 @@ fi
 MISSING_RESOURCES=""
 
 if ! kubectl get namespace app; then
-    MISSING_RESOURCES="Namespace 'app' is missing.\n$MISSING_RESOURCES"
+    kubectl create ns app
+fi
+
+if ! kubectl get namespace cert-manager; then
+    kubectl create ns cert-manager
 fi
 
 if ! kubectl get secret regcred -n app; then
