@@ -1,5 +1,5 @@
 global:
-  environment: prod
+  environment: dev
   appNamespace: app
   caBundleName: internal-ca-bundle
   issuerNames:
