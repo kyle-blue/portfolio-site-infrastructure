@@ -1,0 +1,46 @@
+name: "Apply secrets to cluster"
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  apply_secrets:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/bigboiblue/kblue-io-registry/helmfile:latest
+      credentials:
+        username: ${{ secrets.GITLAB_USERNAME }}
+        password: ${{ secrets.GITLAB_TOKEN }}
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p ~/.kube
+      - run: "echo \"${{ secrets.KUBE_CONFIG }}\" > ~/.kube/config"
+      - run: kubectl create ns app || echo
+      - run: kubectl create ns cert-manager || echo
+      - run: kubectl create secret docker-registry regcred --docker-server=https://registry.gitlab.com --docker-username=${{ secrets.GITLAB_USERNAME }} --docker-password=${{ secrets.GITLAB_TOKEN }} --docker-email=${{ secrets.GITLAB_EMAIL }} -n app || echo
+      - run: kubectl create secret generic psql-password --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -n app || echo
+  apply_helmfile:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/bigboiblue/kblue-io-registry/helmfile:latest
+      credentials:
+        username: ${{ secrets.GITLAB_USERNAME }}
+        password: ${{ secrets.GITLAB_TOKEN }}
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: git config --global --add safe.directory $PWD
+      - run: mkdir -p ~/.kube
+      - run: "echo \"${{ secrets.KUBE_CONFIG }}\" > ~/.kube/config"
+      - run: |
+          # Ensure diff plugin is installed
+          helm plugin install https://github.com/databus23/helm-diff || helm plugin update diff || echo
+          if kubectl get ns calico-system; then
+            echo "Cluster already initialised. Applying helmfile"
+            helmfile apply -f ./kubernetes/helmfile.yaml -e prod --take-ownership
+          else
+            echo "Cluster not yet initialised. Syncing helmfile"
+            helmfile sync -f ./kubernetes/helmfile.yaml -e prod --take-ownership
+          fi
