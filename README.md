@@ -21,6 +21,8 @@ Start a single node cluster for development using the `start_single_node_cluster
 
 Immediately after creating the cluster you will need to apply the secrets displayed in the "secrets" section (otherwise pods will startup with errors)
 
+Then, add the other repos to the `<git-root>/projects` directory by running `./scripts/pull_repos.sh`. This is required for tilt's live-update / hot-reload to work. It is recommended to test changes to these services by updating the repos automatically pulled to the `<git-root>/projects` directory (as they will hot-reload in the cluster automatically).
+
 Then, in the root if this git repo, run `tilt up`. This will essentially run `helmfile sync -e dev -f kubernetes/helmfile.yaml --take-ownership` to bootstrap the k8s cluster with all the required resources. Tilt then monitors these resources, displays them in a nice ui, and takes care of live update for specified resources.
 
 When run locally, everything is setup to use www.kblue-dev.io (on their appropriate ports), therefore in your hosts file set www.kblue-dev.io and api.kblue-dev.io to point toward 127.0.0.1.
