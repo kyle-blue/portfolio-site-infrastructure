@@ -9,4 +9,6 @@ kubectl delete pv --all
 
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname "$SCRIPT")
-${SCRIPT_PATH}/apply_all_dev.sh
+cd ${SCRIPT_PATH}/../kubernetes
+
+helmfile -e dev sync -l name=app
