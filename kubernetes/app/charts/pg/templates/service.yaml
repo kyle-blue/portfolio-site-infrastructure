@@ -10,8 +10,8 @@ spec:
   selector:
     app: postgresql
   ports:
-  - port: 5432
-    targetPort: 5432
+  - port: {{ .Values.service.containerPort }}
+    targetPort: {{ .Values.service.containerPort }}
     {{- if eq .Values.service.type "NodePort" }}
     nodePort: {{ .Values.service.nodePort }}
     {{- end }}

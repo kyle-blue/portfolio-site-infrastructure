@@ -33,7 +33,7 @@ spec:
               memory: "1G"
               cpu: "1"
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.service.containerPort }}
           envFrom:
             - configMapRef:
                 name: psql-config
