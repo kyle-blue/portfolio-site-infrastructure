@@ -82,7 +82,7 @@ spec:
     - useDefaultCAs: false
     - secret:
         name: internal-ca-secret
-        key: ca.crt
+        key: tls.crt
   target:
     configMap:
       key: root-certs.pem
