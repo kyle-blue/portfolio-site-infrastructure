@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 echo "WARNING: This will delete your old ~/.kube/config. Continue? (y/n)"
 read CONTINUE
 
