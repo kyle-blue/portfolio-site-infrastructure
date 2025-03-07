@@ -2,7 +2,8 @@ pg:
   service:
     numReplicas: 1
     type: NodePort
-    nodePort: 5432
+    containerPort: 5432
+    nodePort: 30003
   volume:
     size: 1G
     hostMountPath: /.db_data # OVERRIDDEN IN HELMFILE TO BE $GIT_ROOT/.db_data
