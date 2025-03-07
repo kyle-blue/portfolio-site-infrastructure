@@ -3,6 +3,7 @@ service:
   type: ClusterIP
   # Only used when service.type is NodePort
   nodePort: 5432
+  containerPort: 5432
   envVars: {}
 
 volume:
