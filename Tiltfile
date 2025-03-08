@@ -86,3 +86,12 @@ local_resource(
     trigger_mode=TRIGGER_MODE_MANUAL,
     auto_init=False
 )
+
+
+cmd_button(
+    name='install-dependencies-frontend',
+    resource='frontend',
+    argv=['bash', '-c', "kubectl exec deployment/frontend -n app -- yarn"],
+    text='Reinstall npm dependencies',
+    icon_name='download'
+)
