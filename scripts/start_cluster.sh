@@ -7,6 +7,12 @@ SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname "$SCRIPT")
 REPO_PATH=$(dirname "$SCRIPT_PATH")
 
+CONFIG_PATH=$REPO_PATH/kubernetes/kubeadm/config-prod.yaml
+if [ "$1" != "" ]; then
+    CONFIG_PATH="$1"
+fi
+
+
 if [ "$CREATED" != "y" ]; then
     echo "Turning off memory swap as kubeadm cannot handle this..."
     sudo swapoff -a
@@ -26,7 +32,7 @@ if [ "$CREATED" != "y" ]; then
     sleep 3
 
     echo "Initialising kubeadm, and applying config to make kubelet cgroup driver systemd (must match)" 
-    sudo kubeadm init --config "$REPO_PATH/kubernetes/kubeadm/config.yaml"
+    sudo kubeadm init --config "$CONFIG_PATH"
 
     echo "Setting kube config"
     mkdir -p $HOME/.kube
