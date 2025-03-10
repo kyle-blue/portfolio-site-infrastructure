@@ -35,7 +35,7 @@ load('ext://uibutton', 'cmd_button', 'location', 'text_input')
 load('ext://file_sync_only', 'file_sync_only')
 load('ext://k8s_attach', 'k8s_attach')
 
-is_cluster_initialised = local(' kubectl get ns calico-system >/dev/null 2>&1 && echo true') != 'true'
+is_cluster_initialised = local('sh -c "kubectl get ns calico-system >/dev/null 2>&1 && echo true; exit 0"') == 'true'
 if not is_cluster_initialised:
     helmfile_sync("kubernetes/helmfile.yaml")
 else:
@@ -85,4 +85,13 @@ local_resource(
     cmd='./scripts/restart_dev_volumes.sh',
     trigger_mode=TRIGGER_MODE_MANUAL,
     auto_init=False
+)
+
+
+cmd_button(
+    name='install-dependencies-frontend',
+    resource='frontend',
+    argv=['bash', '-c', "kubectl exec deployment/frontend -n app -- yarn"],
+    text='Reinstall npm dependencies',
+    icon_name='download'
 )

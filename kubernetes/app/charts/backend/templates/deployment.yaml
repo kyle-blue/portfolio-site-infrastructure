@@ -21,9 +21,9 @@ spec:
           image: {{ .Values.service.image }}
           imagePullPolicy: Always # Since we usually just use :latest tag
           resources: 
-            limits:
-              memory: {{ .Values.service.limits.memory }}
-              cpu: {{ .Values.service.limits.cpu }}
+            {{ if eq .Values.service.resources.isHardLimit true }}limits{{ else }}requests{{ end }}:
+              memory: {{ .Values.service.resources.memory }}
+              cpu: {{ .Values.service.resources.cpu }}
           env:
             - name: ENVIRONMENT
               value: {{ include "environment" . }}

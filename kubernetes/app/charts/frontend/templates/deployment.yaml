@@ -28,9 +28,9 @@ spec:
               value: {{ $value }}
             {{- end }}
           resources: 
-            limits:
-              memory: {{ .Values.service.limits.memory }}
-              cpu: {{ .Values.service.limits.cpu }}
+            {{ if eq .Values.service.resources.isHardLimit true }}limits{{ else }}requests{{ end }}:
+              memory: {{ .Values.service.resources.memory }}
+              cpu: {{ .Values.service.resources.cpu }}
           ports:
             - containerPort: {{ .Values.service.containerPort }}
           volumeMounts:
