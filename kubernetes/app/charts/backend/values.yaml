@@ -4,7 +4,8 @@ service:
   numReplicas: 1
   containerPort: 8080
   envVars: {}
-  limits:
+  resources:
+    isHardLimit: true
     memory: "512M"
     cpu: "0.5"
 
