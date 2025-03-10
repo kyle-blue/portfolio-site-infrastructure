@@ -35,7 +35,7 @@ load('ext://uibutton', 'cmd_button', 'location', 'text_input')
 load('ext://file_sync_only', 'file_sync_only')
 load('ext://k8s_attach', 'k8s_attach')
 
-is_cluster_initialised = local('sh -c "kubectl get ns calico-system >/dev/null 2>&1 && echo true; exit 0"') == 'true'
+is_cluster_initialised = str(local('sh -c "kubectl get ns calico-system >/dev/null 2>&1 && echo true; exit 0"')).strip() == 'true'
 if not is_cluster_initialised:
     helmfile_sync("kubernetes/helmfile.yaml")
 else:
