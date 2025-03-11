@@ -36,12 +36,20 @@ data:
 
             server {
                 listen 80;
+                server_name {{ .Values.ingress.host }};
                 root /usr/share/nginx/html;
                 index index.html;
 
+
+                location ^~ /.well-known/acme-challenge/ {
+                    root /usr/share/nginx/html;
+                    allow all;
+                    try_files $uri =404;  
+                }
+
                 location / {
                     try_files $uri /index.html;
-                }
+                }              
 
                 location /static/ {
                     # Allow direct serving of static assets (JS, CSS, images)
@@ -50,4 +58,18 @@ data:
 
                 error_page 404 /index.html;
             }
+
+            server {
+                server_name {{ .Values.ingress.bareDomain }};
+
+                location ^~ /.well-known/acme-challenge/ {
+                    root /usr/share/nginx/html;
+                    allow all;
+                    try_files $uri =404;
+                }
+
+                location / {
+                    return 301 https://{{ .Values.ingress.host }}$request_uri;
+                }
+            }            
         }

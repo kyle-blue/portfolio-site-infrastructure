@@ -32,6 +32,7 @@ frontend:
       cpu: "1"
   ingress:
     useStagingIssuer: true
+    bareDomain: kblue-dev.io
     host: www.kblue-dev.io
     rps: 10000
 
