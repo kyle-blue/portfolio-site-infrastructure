@@ -1,38 +1,53 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-conf-{{ .Values.service.name }}
-  namespace: {{ include "app-namespace" . }}
+    name: nginx-conf-{{ .Values.service.name }}
+    namespace: {{ include "app-namespace" . }}
 data:
-  nginx.conf: |
-    user  nginx;
-    worker_processes  1;
+    nginx.conf: |
+        user  nginx;
+        worker_processes  1;
 
-    error_log  /var/log/nginx/error.log warn;
-    pid        /var/run/nginx.pid;
-
-
-    events {
-        worker_connections  10240;
-    }
+        error_log  /var/log/nginx/error.log warn;
+        pid        /var/run/nginx.pid;
 
 
-    http {
-        include       /etc/nginx/mime.types;
-        default_type  application/octet-stream;
+        events {
+            worker_connections  10240;
+        }
 
-        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                          '$status $body_bytes_sent "$http_referer" '
-                          '"$http_user_agent" "$http_x_forwarded_for"';
 
-        access_log  /var/log/nginx/access.log  main;
+        http {
+            include       /etc/nginx/mime.types;
+            default_type  application/octet-stream;
 
-        sendfile        on;
-        #tcp_nopush     on;
+            log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                              '$status $body_bytes_sent "$http_referer" '
+                              '"$http_user_agent" "$http_x_forwarded_for"';
 
-        keepalive_timeout  65;
+            access_log  /var/log/nginx/access.log  main;
 
-        #gzip  on;
+            sendfile        on;
+            #tcp_nopush     on;
 
-        include /etc/nginx/conf.d/*.conf;
-    }
+            keepalive_timeout  65;
+
+            #gzip  on;
+
+            server {
+                listen 80;
+                root /usr/share/nginx/html;
+                index index.html;
+
+                location / {
+                    try_files $uri /index.html;
+                }
+
+                location /static/ {
+                    # Allow direct serving of static assets (JS, CSS, images)
+                    try_files $uri /index.html;
+                }
+
+                error_page 404 /index.html;
+            }
+        }

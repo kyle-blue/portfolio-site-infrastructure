@@ -4,7 +4,8 @@ pg:
     type: ClusterIP
   volume:
     size: 10G
-    hostMountPath: /.db_data # OVERRIDDEN IN HELMFILE TO BE $HOME/.db_data
+    # OVERRIDDEN IN HELMFILE TO BE $HOME/.db_data
+    hostMountPath: /home/cluster-admin/.db_data 
 
 backend:
   service:
