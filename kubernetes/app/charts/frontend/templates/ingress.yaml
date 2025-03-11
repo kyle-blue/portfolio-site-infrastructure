@@ -25,16 +25,28 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: [{{ .Values.ingress.host | quote }}]
+    - hosts:
+      {{- range $key, $value := list .Values.ingress.bareDomain .Values.ingress.host }}
+      - {{ $value | quote }}
+      {{- end }}
       secretName: {{ $tlsSecretName }} 
   rules:
-    - host: {{ .Values.ingress.host }}
+    {{- range $key, $value := list .Values.ingress.bareDomain .Values.ingress.host }}
+    - host: {{ $value | quote }}
       http:
         paths:
+          - path: "/.well-known/acme-challenge/*"  
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $.Values.service.name }}
+                port:
+                  number: {{ $.Values.service.containerPort }}
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: {{ .Values.service.name }}
+                name: {{ $.Values.service.name }}
                 port:
-                  number: {{ .Values.service.containerPort }}
+                  number: {{ $.Values.service.containerPort }}
+    {{- end }}
