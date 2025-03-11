@@ -1,5 +1,7 @@
 {
-    "[yaml]": {
-        "editor.formatOnSave": false
+    "[helm]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false
     }
 }
