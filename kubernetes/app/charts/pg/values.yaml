@@ -9,4 +9,4 @@ service:
 volume:
   size: 10G
   # This is to be overwritten in parent helmfile to something in $HOME to prevent permission issues
-  hostMountPath: /.db_data
+  hostMountPath: /home/cluster-admin/.db_data
