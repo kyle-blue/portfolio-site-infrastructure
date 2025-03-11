@@ -24,5 +24,6 @@ frontend:
     containerPort: 80
   ingress:
     useStagingIssuer: false
+    bareDomain: kblue.io
     host: www.kblue.io
     rps: 20
