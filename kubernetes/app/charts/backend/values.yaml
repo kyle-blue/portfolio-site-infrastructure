@@ -4,6 +4,8 @@ service:
   numReplicas: 1
   containerPort: 8080
   envVars: {}
+  allowedOrigins:
+    - "https://www.kblue.io"
   resources:
     isHardLimit: true
     memory: "512M"

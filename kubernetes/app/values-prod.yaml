@@ -12,6 +12,8 @@ backend:
     image: registry.gitlab.com/bigboiblue/kblue-io-registry/backend:latest
     numReplicas: 1
     containerPort: 8080
+    allowedOrigins:
+      - "https://www.kblue.io"
   ingress:
     useStagingIssuer: false
     host: api.kblue.io

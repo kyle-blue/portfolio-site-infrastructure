@@ -21,6 +21,7 @@ jobs:
       - run: kubectl create ns cert-manager || echo
       - run: kubectl create secret docker-registry regcred --docker-server=https://registry.gitlab.com --docker-username=${{ secrets.GITLAB_USERNAME }} --docker-password=${{ secrets.GITLAB_TOKEN }} --docker-email=${{ secrets.GITLAB_EMAIL }} -n app || echo
       - run: kubectl create secret generic psql-password --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -n app || echo
+      - run: kubectl create secret generic email-creds --from-literal=EMAIL_ADDRESS='${{ secrets.BOT_EMAIL_ADDRESS }}' --from-literal=EMAIL_PASSWORD='${{ secrets.BOT_EMAIL_PASSWORD }}' -n app || echo
   apply_helmfile:
     runs-on: ubuntu-latest
     container:
