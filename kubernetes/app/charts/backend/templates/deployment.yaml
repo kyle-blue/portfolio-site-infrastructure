@@ -27,6 +27,8 @@ spec:
           env:
             - name: ENVIRONMENT
               value: {{ include "environment" . }}
+            - name: ALLOWED_ORIGINS
+              value: {{ join ", " .Values.service.allowedOrigins }}
             {{- range $key, $value := .Values.service.envVars }}
             - name: {{ $key }}
               value: {{ $value }}
@@ -36,6 +38,9 @@ spec:
           envFrom:
             - secretRef:
                 name: psql-password
+                optional: false
+            - secretRef:
+                name: email-creds
                 optional: false
       {{- if eq (include "environment" .) "dev" }}
           volumeMounts:
