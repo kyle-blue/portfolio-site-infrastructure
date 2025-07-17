@@ -29,9 +29,6 @@ if ! kubectl get secret psql-password -n app; then
     MISSING_RESOURCES="Secret 'psql-password' is missing in 'app' namespace.\n$MISSING_RESOURCES"
 fi
 
-if ! kubectl get secret ssh-keys -n app; then
-    MISSING_RESOURCES="Secret 'ssh-keys' is missing in 'app' namespace.\n$MISSING_RESOURCES"
-fi
 
 if ! kubectl get secret email-creds -n app; then
     MISSING_RESOURCES="Secret 'email-creds' is missing in 'app' namespace.\n$MISSING_RESOURCES"
