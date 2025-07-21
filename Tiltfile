@@ -37,7 +37,7 @@ load('ext://k8s_attach', 'k8s_attach')
 
 is_cluster_initialised = str(local('sh -c "kubectl get ns calico-system >/dev/null 2>&1 && echo true; exit 0"')).strip() == 'true'
 if not is_cluster_initialised:
-    helmfile_sync("kubernetes/helmfile.yaml")
+    helmfile_sync("kubernetes/helmfile.gotmpl")
 else:
     print("Already deployed cluster. Skipping initialisation")
 
